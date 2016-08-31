@@ -69,10 +69,12 @@ public class NativeCameraLauncher extends CordovaPlugin {
 	private int targetHeight;
 	private Uri imageUri;
 	private File photo;
+	private String name;
 	private static final String _DATA = "_data";
 	private CallbackContext callbackContext;
 
 	public NativeCameraLauncher() {
+		
 	}
 
 	void failPicture(String reason) {
@@ -108,6 +110,8 @@ public class NativeCameraLauncher extends CordovaPlugin {
 
 	public void takePicture() {
 		// Save the number of images currently on disk for later
+		Long tsLong = System.nanoTime();
+		name = tsLong.toString();
 		Intent intent = new Intent(this.cordova.getActivity().getApplicationContext(), CameraActivity.class);
 		this.photo = createCaptureFile();
 		this.imageUri = Uri.fromFile(photo);
@@ -116,7 +120,8 @@ public class NativeCameraLauncher extends CordovaPlugin {
 	}
 
 	private File createCaptureFile() {
-		File photo = new File(getTempDirectoryPath(this.cordova.getActivity().getApplicationContext()), "Pic.jpg");
+
+		File photo = new File(getTempDirectoryPath(this.cordova.getActivity().getApplicationContext()), name + ".jpg");
 		return photo;
 	}
 
@@ -129,7 +134,7 @@ public class NativeCameraLauncher extends CordovaPlugin {
 				// during compression
 				ExifHelper exif = new ExifHelper();
 				exif.createInFile(getTempDirectoryPath(this.cordova.getActivity().getApplicationContext())
-						+ "/Pic.jpg");
+						+ "/"+name+".jpg");
 				exif.readExifData();
 				rotate = exif.getOrientation();
 
